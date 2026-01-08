@@ -80,14 +80,21 @@ static String identify1N(
 }
     public static void main(String[] args) throws Exception {
 
-        int[][] image = loadGrayscaleImage("101_1.tif");
-        int[][] image2 = loadGrayscaleImage("101_7.tif");
+        int[][] image = loadGrayscaleImage("C:\\Programmation\\Java\\Java\\Empreinte\\fingerprints\\DB1_B\\101_1.tif");
+        // int[][] image1 = loadGrayscaleImage("101_1.tif");
+        // int[][] image2 = loadGrayscaleImage("101_1r1.tif");
+        // int[][] image3 = loadGrayscaleImage("101_1re.tif");
 
-        extractMinutiaeWithShowImage(image);
+         extractMinutiaeWithShowImage(image);
+        // extractMinutiaeWithShowImage(image1);
+        // extractMinutiaeWithShowImage(image2);
+        // extractMinutiaeWithShowImage(image3);
         //evaluateDB1_B("C:\\Programmation\\Java\\Java\\Empreinte\\fingerprints\\DB1_B");
 
         //identify1NFromImage("101_1.tif","C:\\Programmation\\Java\\Java\\Empreinte\\fingerprints\\DB1_B",0.260);
-        //matching(image, image2);
+        // matching(image1, image);
+        // matching(image1, image2);
+        // matching(image1, image3);
     }
 
     static void identify1NFromImage(String queryPath,String galleryPath,double threshold) throws Exception {

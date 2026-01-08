@@ -1,64 +1,45 @@
-import java.awt.image.BufferedImage;
-
 public class Normalisation {
-
-    /**
-     * Normalise une image en niveaux de gris.
-     * Chaque pixel est transformé pour avoir une moyenne μ0 et un écart-type σ0.
-     * 
-     * @param img BufferedImage niveau de gris
-     * @param desiredMean moyenne souhaitée (ex: 128)
-     * @param desiredStd ecart-type souhaité (ex: 50)
-     * @return matrice normalisée [0..255]
-     */
-    public static int[][] normalize(BufferedImage img, float desiredMean, float desiredStd) {
-        int w = img.getWidth();
-        int h = img.getHeight();
-        int[][] gray = new int[h][w];
-
+    public static float average(int[][] img){
+        int h = img.length, w = img[0].length;
+        int imgSize = h*w;
         float mean = 0;
-        float variance = 0;
-
-        // calculer la luminance et la moyenne
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
-                int rgb = img.getRGB(x, y);
-                int r = (rgb >> 16) & 0xff;
-                int g = (rgb >> 8) & 0xff;
-                int b = rgb & 0xff;
-                int lum = (int)(0.299*r + 0.587*g + 0.114*b);
-                gray[y][x] = lum;
-                mean += lum;
+                mean += img[y][x];
             }
         }
-        mean /= (w * h);
+        mean /= imgSize;
+        return mean;
+    }
 
-        // calculer variance
+    public static float variance(int[][] img, float mean){
+        int h = img.length, w = img[0].length;
+        int imgSize = h*w;
+        float var = 0;
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
-                float diff = gray[y][x] - mean;
-                variance += diff * diff;
+                var += (img[y][x] - mean) * (img[y][x] - mean);
             }
         }
-        variance /= (w * h);
-        float std = (float)Math.sqrt(variance);
-
-        // normalisation
-        int[][] norm = new int[h][w];
+        var /= imgSize;
+        return var;
+    }
+    
+    public static int[][] normalize(int[][] img, float mean, float var) {
+        int h = img.length, w = img[0].length;
+        float Mo = 100; float V0 = 100;
+        int normalizeImage[][] = new int [h][w];
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
-                float val = gray[y][x];
-                if (val > mean)
-                    val = desiredMean + desiredStd * (val - mean) / std;
-                else
-                    val = desiredMean - desiredStd * (mean - val) / std;
-
-                // clamp [0..255]
-                val = Math.min(255, Math.max(0, val));
-                norm[y][x] = (int)val;
+                if (img[y][x] > mean) {
+                    normalizeImage[y][x] = (int)(Mo + Math.sqrt((img[y][x] - mean) * (img[y][x] - mean) * V0 / var));
+                } else {
+                    normalizeImage[y][x] = (int)(Mo - Math.sqrt((img[y][x] - mean) * (img[y][x] - mean) * V0 / var));
+                }
             }
         }
+        
+        return normalizeImage;
 
-        return norm;
     }
 }
