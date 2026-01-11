@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 import javax.imageio.ImageIO;
-import  org.apache.pdfbox.pdmodel.PDDocument;
+
 
 
 public class FingerprintMinutiae {
