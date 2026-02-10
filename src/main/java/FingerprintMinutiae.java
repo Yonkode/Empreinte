@@ -82,7 +82,7 @@ static String identify1N(
     public static void main(String[] args) throws Exception {
 
         int[][] image = loadGrayscaleImage("C:\\Programmation\\Java\\Java\\Empreinte\\fingerprints\\DB1_B\\101_1.tif");
-        // int[][] image1 = loadGrayscaleImage("101_1.tif");
+        int[][] image1 = loadGrayscaleImage("101_1.tif");
         // int[][] image2 = loadGrayscaleImage("101_1r1.tif");
         // int[][] image3 = loadGrayscaleImage("101_1re.tif");
 
@@ -90,10 +90,10 @@ static String identify1N(
         // extractMinutiaeWithShowImage(image1);
         // extractMinutiaeWithShowImage(image2);
         // extractMinutiaeWithShowImage(image3);
-        //evaluateDB1_B("C:\\Programmation\\Java\\Java\\Empreinte\\fingerprints\\DB1_B");
+        evaluateDB1_B("C:\\Programmation\\Java\\Java\\Empreinte\\fingerprints\\DB1_B");
 
-        //identify1NFromImage("101_1.tif","C:\\Programmation\\Java\\Java\\Empreinte\\fingerprints\\DB1_B",0.260);
-        // matching(image1, image);
+        identify1NFromImage("101_1.tif","C:\\Programmation\\Java\\Java\\Empreinte\\fingerprints\\DB1_B",0.260);
+        matching(image1, image);
         // matching(image1, image2);
         // matching(image1, image3);
     }
@@ -217,19 +217,6 @@ static String identify1N(
     }
 
 
-    static List<Minutia> extractMinutiaeFromFile(File f) throws Exception {
-
-        int[][] img = normalize(loadGrayscaleImage(f.getAbsolutePath()), 128, 128);
-        double[][] ori = computeOrientation(img, 16);
-        double[][] frequency = computeRidgeFrequency(
-            img, ori, 16);
-        img = gaborEnhance(img, ori, frequency);
-        int[][] bin = adaptiveBinarize(img, 16);
-        int[][] thin = thinning(bin);
-
-        return filterMinutiaeStrong(extractMinutiae(thin, ori));
-    }
-
     static List<Minutia> extractMinutiae(int[][] image) throws Exception {
 
         image = normalize(image, 128, 128);
@@ -276,15 +263,6 @@ static String identify1N(
         minutiae = filterMinutiaeStrong(minutiae);
 
         return minutiae;
-    }
-
-    static int countRidgePixels(int[][] img, int x, int y, int r) {
-        int count = 0;
-        for (int i = -r; i <= r; i++)
-            for (int j = -r; j <= r; j++)
-                if (img[y + i][x + j] == 1)
-                    count++;
-        return count;
     }
 
     static double[][] computeRidgeFrequency(int[][] img,double[][] orientation,int block) {
@@ -339,44 +317,6 @@ static String identify1N(
         return freq;
     }
 
-    static List<Minutia> extractMinutiaeFullPipeline(int[][] image) throws Exception {
-
-        /* 1️⃣ NORMALISATION */
-        image = normalize(image, 128, 128);
-
-        /* 2️⃣ ROI (PRIORITÉ ABSOLUE) */
-        boolean[][] roi = computeROIMask(image, 16, 300.0);
-
-        /* 3️⃣ ORIENTATION */
-        double[][] orientation = computeOrientation(image, 16);
-        double[][] frequency = computeRidgeFrequency(
-            image, orientation, 16);
-        /* 4️⃣ AMÉLIORATION GABOR */
-        image = gaborEnhance(image, orientation, frequency);
-
-        /* 5️⃣ BINARISATION + ROI */
-        int[][] binary = adaptiveBinarize(image, 16);
-        binary = applyROIMask(binary, roi);
-
-        /* 6️⃣ SQUELETTISATION */
-        int[][] thin = thinning(binary);
-
-        /* 7️⃣ EXTRACTION DES MINUTIES */
-        List<Minutia> minutiae = extractMinutiae(thin, orientation);
-
-        /* 8️⃣ FILTRAGES CRITIQUES */
-        minutiae = filterBorderMinutiae(
-                minutiae, image[0].length, image.length);
-
-        minutiae = filterByOrientationConsistency(
-                minutiae, orientation, 30);
-
-        minutiae = filterMinutiaeStrong(minutiae);
-
-        return minutiae;
-    }
-
-
     static void evaluateDB1_B(String basePath) throws Exception {
 
         List<Double> genuine = new ArrayList<>();
@@ -425,8 +365,6 @@ static String identify1N(
 
         saveROC(roc, "roc_db1.csv");
     }
-
-
 
     static void showROIMask(int[][] img, boolean[][] roi) {
 
@@ -484,7 +422,6 @@ static String identify1N(
             }
         return out;
     }
-
     
     static double[][] computeOrientation(int[][] img, int block) {
         int h = img.length;
@@ -554,7 +491,6 @@ static String identify1N(
         }
         return roi;
     }
-
 
     static int[][] applyROIMask(int[][] img, boolean[][] roi) {
 
@@ -773,7 +709,6 @@ static String identify1N(
         showImage(out, "Minuties détectées");
     }
 
-
     static int[][] gaborEnhance(
             int[][] img,
             double[][] ori,
@@ -820,7 +755,6 @@ static String identify1N(
 
         return out;
     }
-
 
     static int[][] adaptiveBinarize(int[][] img, int block) {
         int h = img.length, w = img[0].length;
@@ -982,7 +916,6 @@ static String identify1N(
         return eer;
     }
 
-
     static void saveROC(List<RocPoint> roc, String file) throws Exception {
         PrintWriter pw = new PrintWriter(new FileWriter(file));
         pw.println("threshold,FAR,FRR");
@@ -992,69 +925,6 @@ static String identify1N(
                     p.threshold, p.far, p.frr);
 
         pw.close();
-    }
-
-    static void identifyFromImage(
-        String queryPath,
-        String basePath,
-        double threshold) throws Exception {
-
-        // 1️⃣ Extraction de la requête
-        int[][] img = normalize(loadGrayscaleImage(queryPath), 128, 128);
-        double[][] ori = computeOrientation(img, 16);
-        double[][] frequency2 = computeRidgeFrequency(
-            img, ori, 16);
-        img = gaborEnhance(img, ori, frequency2);
-        int[][] bin = adaptiveBinarize(img, 16);
-        int[][] thin = thinning(bin);
-
-        List<Minutia> queryMin = filterMinutiaeStrong(
-                extractMinutiae(thin, ori));
-
-        //  Construction de la galerie (1 image par doigt)
-        Map<String, List<Minutia>> gallery = new HashMap<>();
-
-        for (int id = 101; id <= 110; id++) {
-            String path = basePath + "\\" + id + "_1.tif";
-
-            int[][] gimg = normalize(loadGrayscaleImage(path), 128, 128);
-            double[][] gori = computeOrientation(gimg, 16);
-            double[][] frequency3 = computeRidgeFrequency(
-            gimg, gori, 16);
-            gimg = gaborEnhance(gimg, gori, frequency3);
-            int[][] gbin = adaptiveBinarize(gimg, 16);
-            int[][] gthin = thinning(gbin);
-
-            List<Minutia> gMin = filterMinutiaeStrong(
-                    extractMinutiae(gthin, gori));
-
-            gallery.put(String.valueOf(id), gMin);
-        }
-
-        //  Matching 1:N
-        String bestId = null;
-        double bestScore = 0;
-
-        for (Map.Entry<String, List<Minutia>> e : gallery.entrySet()) {
-            double score = matchMinutiaeHough(queryMin, e.getValue());
-            System.out.println(score);
-
-            if (score > bestScore) {
-                bestScore = score;
-                bestId = e.getKey();
-            }
-        }
-
-        //  Décision
-        System.out.println("========== IDENTIFICATION ==========");
-        System.out.println("Meilleur ID : " + bestId);
-        System.out.printf("Score : %.3f%n", bestScore);
-
-        if (bestScore >= threshold)
-            System.out.println("Décision : ✅ ACCEPTÉ");
-        else
-            System.out.println("Décision : ❌ REJETÉ");
-
     }
 
 }
