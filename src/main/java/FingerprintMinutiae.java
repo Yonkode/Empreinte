@@ -22,7 +22,7 @@ public class FingerprintMinutiae {
             this.type = type;
         }
     }
-float
+
     static class TransformKey {
     int dx, dy, dTheta;
 
