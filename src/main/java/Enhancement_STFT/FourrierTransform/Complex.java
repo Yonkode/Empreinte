@@ -34,8 +34,16 @@ public class Complex{
         double abs = Math.sqrt(Math.pow(real,2) + Math.pow(img,2));
         return abs;
     }
+    public static double phase(double real, double imag) {
+        return Math.atan2(imag, real);
+    }
+
     public double magnitude() {
         return Math.sqrt(this.real * this.real + this.imag * this.imag);
     }
+    public double phase() {
+        return Math.atan2(this.imag, this.real);
+    }
+
 
 }

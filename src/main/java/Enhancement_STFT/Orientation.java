@@ -16,6 +16,7 @@ public class Orientation {
         int  margin = block + 1;
         double[][] BLKSZ = new double[block][block];
         double[][] theta = new double[block][block];
+        double[][] r = new double[block][block];
         double[][] proba = new double[block][block];
         double[][] window = ComputeWindowOfSTFT.computeWindow();
         double[] probatheta = new double[block];
@@ -30,12 +31,19 @@ public class Orientation {
                     for (int j = 0 ; j < block ; j++) {
 
                         BLKSZ[i][j] = image[y + i][x + j] ;
-                        theta[i][j] = Math.atan2(x + j,y + i);
                     }
                 }
                 Complex [][] transform = new Complex[block][block];
                 BLKSZ = ComputeWindowOfSTFT.convolution2D(BLKSZ, window);
                 transform = ComputeFourierTransform2D(BLKSZ);
+                for (int i= 0; i < transform.length; i++)
+                {
+                    for(int j=0; j<transform[0].length; j++)
+                    {
+                        theta[i][j]=transform[i][j].phase();
+                        r[i][j] =transform[i][j].magnitude();
+                    }
+                }
                 proba = ComputeProbability.probability(transform);
                 probatheta = ComputeProbabilityTheta.probabilityOfTheta(proba);
                 energy = computeEnergy(probatheta, theta[0]);
