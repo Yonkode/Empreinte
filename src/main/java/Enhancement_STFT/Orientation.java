@@ -9,7 +9,7 @@ import static Enhancement_STFT.FourrierTransform.FourierTransform2D.ComputeFouri
 
 public class Orientation {
 
-    double[][] computeOrientation(int [][] image, int block)
+    public double[][] computeOrientation(int [][] image, int block)
     {
         int heigth = image.length;
         int width = image[0].length;
@@ -50,7 +50,7 @@ public class Orientation {
         return ori;
     }
 
-    double computeEnergy(double [] probaTheta, double [] theta)
+    public double computeEnergy(double [] probaTheta, double [] theta)
     {
         double energy = 0;
         int heigth = probaTheta.length;
@@ -67,13 +67,13 @@ public class Orientation {
                 y +=probaTheta[i]*Math.sin(2*theta[i]);
                 x +=probaTheta[i]*Math.cos(2*theta[i]);
             }
-            energy= (double) 1 /2 * Math.atan2(y,x);
+            energy= (double) 0.5 * Math.atan2(y,x);
         }
 
         return energy;
     }
 
-    double[][] computeSinPart(double[][] orientation)
+    public double[][] computeSinPart(double[][] orientation)
     {
         int heigth = orientation.length, width = orientation[0].length;
         double[][] sinPart = new double[heigth][width];
@@ -87,7 +87,8 @@ public class Orientation {
         }
         return sinPart;
     }
-    double[][] computeCosPart(double[][] orientation)
+
+    public double[][] computeCosPart(double[][] orientation)
     {
         int heigth = orientation.length, width = orientation[0].length;
         double[][] cosPart = new double[heigth][width];
@@ -96,12 +97,13 @@ public class Orientation {
         {
             for (int j= 0; j<width; j++)
             {
-                cosPart[i][j] = Math.sin(orientation[i][j]);
+                cosPart[i][j] = Math.cos(orientation[i][j]);
             }
         }
         return cosPart;
     }
-    double[][] smoothOrientation(double[][] orientation)
+
+    public double[][] smoothOrientation(double[][] orientation)
     {
         int heigth = orientation.length, width = orientation[0].length;
         double [][] cosPart = computeCosPart(orientation);
@@ -126,5 +128,52 @@ public class Orientation {
             }
         }
         return orientationSmooth;
+    }
+
+    public double[][] computeCoherence(double [][] orientation, int block, int W)
+    {
+        int heigth = orientation.length;
+        int width = orientation[0].length;
+
+        double[] similarOrientation = new double[W*W];
+        double[][] coherence = new double[heigth][width];
+
+        for (int y = 0; y < heigth ; y += block)
+        {
+            for (int x = 0; x < width ; x += block)
+            {
+                int val1,val2;
+                double sum = 0;
+                int count = 0;
+                for (int i = -W/2; i <= W/2; i++){
+                    for (int j = -W/2; j <= W/2; j++){
+                        val1 = y + i*block;
+                        val2 = x + j*block;
+                        if(val1< 0 || val2< 0 || val1 >= heigth || val2 >= width)
+                        {
+                            sum += 0;
+                        }
+                        else
+                        {
+                            sum += Math.abs(Math.cos(2*(orientation[y][x] - orientation[val1][val2])));
+                            count++;
+                        }
+                    }
+                }
+                sum = sum/count;
+
+                for (int i = 0; i < block; i++)
+                {
+                    for (int j = 0; j < block; j++)
+                    {
+                        int yy = y + i;
+                        int xx = x + j;
+                        if (yy < heigth && xx < width)
+                            coherence[yy][xx] = sum;
+                    }
+                }
+            }
+        }
+        return coherence;
     }
 }
