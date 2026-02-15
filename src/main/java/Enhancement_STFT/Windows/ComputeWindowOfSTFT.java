@@ -36,7 +36,7 @@ public class ComputeWindowOfSTFT {
     }
 
 
-    public static double[][] convolution2D(int[][] image, double[][] filter) {
+    public static double[][] convolution2D(double [][] image, double[][] filter) {
 
         int height = image.length;
         int width = image[0].length;

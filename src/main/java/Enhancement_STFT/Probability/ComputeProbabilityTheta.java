@@ -1,7 +1,7 @@
 package Enhancement_STFT.Probability;
 
 public class ComputeProbabilityTheta {
-    double [] probabilityOfTheta(double[][] probability)
+    public static double [] probabilityOfTheta(double[][] probability)
     {
         int heigth = probability.length;
         int width = probability[0].length;

@@ -3,7 +3,7 @@ package Enhancement_STFT.Probability;
 import Enhancement_STFT.FourrierTransform.Complex;
 
 public class ComputeProbability {
-    public double[][] probability(Complex [][] fourier)
+    public static double[][] probability(Complex[][] fourier)
     {
         int height = fourier.length;
         int width = fourier[0].length;
