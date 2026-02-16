@@ -184,4 +184,5 @@ public class Orientation {
         }
         return coherence;
     }
+
 }
