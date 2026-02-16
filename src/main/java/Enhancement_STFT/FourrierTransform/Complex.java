@@ -29,6 +29,14 @@ public class Complex{
         double i = this.real * c.imag + this.imag * c.real;
         return new Complex(r, i);
     }
+    public double getReal()
+    {
+        return this.real;
+    }
+    public double getImg()
+    {
+        return this.imag;
+    }
     public static  double magnitude(double real,double img)
     {
         double abs = Math.sqrt(Math.pow(real,2) + Math.pow(img,2));

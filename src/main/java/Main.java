@@ -9,11 +9,7 @@ public class Main {
         double[][] window = ComputeWindowOfSTFT.computeWindow();
         int [][] n= FingerprintMinutiae.normalize(imgage, 128, 128);
 
-        double [][] img = ComputeWindowOfSTFT.convolution2D(imgage, window);
 
-        double [][] img1 = ComputeWindowOfSTFT.convolution2D(n, window);
-        showGrayImage(img , "yo");
-        showGrayImage(img1 , "yo_Normalise");
     }
 
     static void showGrayImage(double[][] img, String title) {
