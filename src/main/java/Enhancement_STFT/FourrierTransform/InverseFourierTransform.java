@@ -1,6 +1,6 @@
 package Enhancement_STFT.FourrierTransform;
 
-public class InverseFourierTransform2D {
+public class InverseFourierTransform {
     public static double []ComputeInverseFourierTransform1D(Complex[] fourierTransform)
     {
         int size = fourierTransform.length;
@@ -37,15 +37,14 @@ public class InverseFourierTransform2D {
                 {
                     for (int j = 0 ; j < width; j++)
                     {
-                        Complex wn,wm,inter;
-                        wn =new Complex(Math.cos(2*Math.PI*i*u/height), Math.sin(2*Math.PI*i*u/height));
-                        wm = new Complex(Math.cos(2*Math.PI*j*v/width), Math.sin(2*Math.PI*j*v/width));
-                        inter = wn.multiply(wm).multiply(fourierTransform[i][j]);
+                        Complex eulerExpression,inter;
+                        eulerExpression =new Complex(Math.cos(2*Math.PI*(((double)i * u)/height + ((double)j * v)/width)), Math.sin(2*Math.PI*(((double)i * u)/height + ((double)j * v)/width)));
+                        inter = eulerExpression.multiply(fourierTransform[i][j]);
                         sumReal += inter.getReal();
                         sumImg +=  inter.getImg() ;
                     }
                 }
-                out[u][v] = (sumReal + sumImg) / (height * width);
+                out[u][v] = sumReal / (height * width);
             }
         }
         return out;

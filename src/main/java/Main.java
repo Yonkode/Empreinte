@@ -1,6 +1,4 @@
 import Enhancement_STFT.Windows.ComputeWindowOfSTFT;
-
-
 import java.awt.image.BufferedImage;
 
 public class Main {
@@ -16,17 +14,6 @@ public class Main {
 
         int h = img.length;
         int w = img[0].length;
-
-        double min = Double.MAX_VALUE;
-        double max = -Double.MAX_VALUE;
-
-        // Recherche min et max
-        for (int y = 0; y < h; y++) {
-            for (int x = 0; x < w; x++) {
-                if (img[y][x] < min) min = img[y][x];
-                if (img[y][x] > max) max = img[y][x];
-            }
-        }
 
         BufferedImage out = new BufferedImage(w, h, BufferedImage.TYPE_BYTE_GRAY);
 

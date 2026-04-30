@@ -29,6 +29,12 @@ public class Complex{
         double i = this.real * c.imag + this.imag * c.real;
         return new Complex(r, i);
     }
+
+    public Complex multiply(double c) {
+        double r = this.real * c;
+        double i = this.imag * c;
+        return new Complex(r, i);
+    }
     public double getReal()
     {
         return this.real;
@@ -53,5 +59,19 @@ public class Complex{
         return Math.atan2(this.imag, this.real);
     }
 
+    public static double[][] magnitude2D(Complex[][] fourierTransform)
+    {
+        int height = fourierTransform.length;
+        int width = fourierTransform[0].length;
+        double [][] out = new double[height][width];
 
+        for (int u = 0 ; u < height; u++)
+        {
+            for (int v = 0 ; v < width; v++)
+            {
+                out[u][v] = fourierTransform[u][v].magnitude();
+            }
+        }
+        return out;
+    }
 }

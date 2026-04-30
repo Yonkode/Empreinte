@@ -1,6 +1,6 @@
 package Enhancement_STFT.FourrierTransform;
 
-public class FourierTransform2D{
+public class FourierTransform{
 
     public static Complex[] fft(Complex[] x) {
 
@@ -95,6 +95,7 @@ public class FourierTransform2D{
                         for (int j = 0 ; j < width; j++)
                         {
                             double a = 2 * Math.PI * ((double) (u * i) / height + (double) (v * j) / width);
+
                             real += imgW[i][j] * Math.cos(a) ;
                             img -= imgW[i][j] * Math.sin(a) ;
                         }
